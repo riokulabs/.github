@@ -42,7 +42,7 @@ npm run dev                # CMS and site together
 scripts/test.sh            # cms checks, web tests, astro check, build
 ```
 
-Browser tests (`npm run test:e2e` in `web/`, needs `npx playwright install chromium`) and Lighthouse run in CI.'''
+Browser tests (`npm run test:e2e` in `web/`, needs `npx playwright install chromium`) run in CI; Lighthouse (`npm run lighthouse`) is a local check.'''
 
 contrib_assets = '''## Content and assets
 
