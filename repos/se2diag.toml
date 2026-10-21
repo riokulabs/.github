@@ -1,0 +1,88 @@
+target = "../../tools/se2diag"
+kind = "tool"
+repo = "se2diag"
+name = "se2diag"
+summary = "Diagnostics toolkit for Space Engineers 2 running natively on Linux through Pulsar and LinuxCompat: frame times, GC, load times, log errors, block state. GPL-3.0."
+keep = []
+extra_labels = '''- name: probe
+  color: c5def5
+  description: In-game C# probes (probes/*.csx)
+- name: platform:linux-native
+  color: fef2c0
+  description: Linux native via Pulsar + LinuxCompat'''
+
+test_script = "python3 -m pytest -q"
+
+pr_checks = [
+  "`scripts/test.sh` passes (pytest, offline: no running game needed)",
+  "No output, log, JSON file, test fixture or error message contains the SeMcp2 port or bearer token",
+  "New probes are read-only C# scripts and look game members up by name at run time (a missing member is reported, not a crash)",
+  "No sudo, no installs outside the user's home; `se2diag tools --install` still tells the user before installing",
+  "README command table updated if a command was added or changed",
+  "No game files, decompiled code or captured traces with private data are committed (`python3 scripts/check_repo_guard.py`)",
+]
+
+guard_forbidden = ["*.dll", "*.exe", "*.pdb", "*.so", ".env", "*.env", "*SeMcp2.cfg", "*.pem", "*.key", "*decompiled*", "*.nettrace", "*.gcdump"]
+guard_allow = []
+guard_max_kb = 512
+guard_allow_large = []
+guard_secret_skip = []
+json_globs = []
+ruff_exclude = []
+
+precommit_extra = '''  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1  # 38bfb07c0c64c304f47eb52090f8288150c77730
+    hooks:
+      - id: ruff'''
+
+security_notes = [
+  "The tool talks to the SeMcp2 plugin on localhost with a bearer token read from SeMcp2.cfg. It must never print, save or log the port or the token. Any path where it does is a vulnerability.",
+  "Probes are read-only. Anything that lets a probe change game state is a vulnerability.",
+  "Not in scope: bugs in the game, Pulsar, LinuxCompat or SeMcp2 itself.",
+]
+
+bug_form_note = "Do not paste the SeMcp2 port or bearer token. The tool should never print them; if it did, say so but redact the value."
+bug_output_note = "Output of the command, or the saved JSON. Remove the SeMcp2 token and personal paths first"
+
+contrib_build = '''Python 3.11+ (standard library only) and git. The tests do not need the game.
+
+```bash
+scripts/test.sh                  # python3 -m pytest -q
+tools/se2diag/se2diag.sh --help  # from the workspace; ./se2diag.sh --help from this checkout
+```
+
+Probes (`probes/*.csx`) run inside the game through the SeMcp2 Pulsar plugin on Linux, so changing a probe needs a running SE2 under Pulsar and LinuxCompat to try it. Say in the pull request whether you ran it against a live game.'''
+
+contrib_assets = '''## Security-sensitive behavior
+
+The SeMcp2 port and bearer token must never be printed, saved to a report, logged, or placed in a fixture or an error message. Probes are read-only. The optional profilers install into the user's home and never use sudo. A pull request that breaks one of these will not be merged.
+
+Do not add Keen code or assets, and do not commit decompiled game code.'''
+
+layout = '''- `se2diag/` the Python CLI (commands, host-side `/proc`, logs and profiler wrappers, `probes.py` packaging).
+- `probes/*.csx` small read-only C# scripts sent to the game through the SeMcp2 plugin; `probes/_prelude.csx` holds shared helpers.
+- `scripts/`, `tests/` (pytest), `README.md`, `VERIFY.md` (how each claim was checked against a live game).'''
+
+build_test = '''```bash
+python3 -m pytest -q       # all tests, offline
+./se2diag.sh --help
+./se2diag.sh status        # needs the game running under Pulsar + LinuxCompat for the in-game parts
+```'''
+
+style = '''- Python 3.11+, standard library only. 4 spaces, 120 columns.
+- Every game member is looked up by name at run time; report what is missing instead of crashing.
+- Commands print a plain report by default, `--json` for machines.'''
+
+rules = '''- The SeMcp2 port and bearer token are secrets: never print, log, save or commit them, and never put them in test fixtures.
+- Probes are read-only. Do not add a probe that changes game state.
+- Host profilers install only into the user's home and never with sudo.
+- Update `VERIFY.md` when a claim is re-checked against a game build.'''
+
+extra_never = [
+  "Never expose, print or store the SeMcp2 port or bearer token.",
+  "Never add a probe that writes game state, and never use sudo.",
+]
+
+skill_build = '''- Live checks need the game running under Pulsar + LinuxCompat: `./se2diag.sh status`, then the command you changed. Say clearly if you did not run against a live game.'''
+
+release_steps = '''   Update the "Built against game ..." line in `README.md` and the relevant `VERIFY.md` entries for the game build you tested.'''

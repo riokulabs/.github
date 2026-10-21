@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question or share an idea
+    url: https://github.com/@@org@@/@@repo@@/discussions
+    about: Questions, setup help and open-ended ideas belong in Discussions, not Issues.
+  - name: Report a security problem privately
+    url: https://github.com/@@org@@/@@repo@@/security/advisories/new
+    about: Do not post vulnerabilities as public issues. See SECURITY.md.
+  - name: Rioku Labs
+    url: https://@@site@@
+    about: Project pages and other mods.

@@ -1,0 +1,89 @@
+target = "../../tools/se2-modkit"
+kind = "tool"
+repo = "se2-modkit"
+name = "se2-modkit"
+summary = "Shared build tooling for Space Engineers 2 mods: environment discovery, Blender-to-game model pipeline, SDK build, validation and tests. GPL-3.0."
+keep = []
+extra_labels = '''- name: pipeline
+  color: c5def5
+  description: Blender model pipeline, SDK build or validation'''
+
+test_script = "python -m pytest -q"
+
+ci_runs_on = "${{ matrix.os }}"
+ci_matrix = '''os: [ubuntu-latest, windows-latest]
+python: ['3.11', '3.12', '3.13']'''
+ci_install = "pip install -e .[dev]"
+ci_test = '''python -m pytest -q -m "not blender and not sdk and not decompiled and not build and not sdkbuild"'''
+
+pr_checks = [
+  "`scripts/test.sh` passes (pytest, offline: nothing needs the game, the SDK, Blender or Steam)",
+  "Nothing in the change reads, stores, logs or asks for Steam credentials or tokens",
+  "Nothing uploads or publishes without explicit user approval",
+  "No machine-specific path (home directories, Steam library paths, Proton builds, drive letters) is a default; discovery rules only",
+  "No game files, decompiled code, Keen type data or captured baselines are committed (`python3 scripts/check_repo_guard.py`)",
+  "README updated if a command, environment variable or supported game version changed",
+]
+
+guard_forbidden = ["*.dll", "*.exe", "*.pdb", "*.so", ".env", "*.env", "*SeMcp2.cfg", "*.pem", "*.key", "*decompiled*", "*.dds", "*.fbx", "*.mwm", "*.tar.zst", "*.tsv.gz"]
+guard_allow = []
+guard_max_kb = 512
+guard_allow_large = []
+guard_secret_skip = []
+json_globs = []
+ruff_exclude = []
+
+precommit_extra = '''  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.1  # 38bfb07c0c64c304f47eb52090f8288150c77730
+    hooks:
+      - id: ruff'''
+
+security_notes = [
+  "Token handling: the tool never asks for, reads, stores or logs Steam credentials or API tokens. A way to make it do so is a vulnerability.",
+  "Anything that uploads, publishes or contacts a remote service without explicit user approval.",
+  "Path handling: anything that lets a project config or mod repo make the tool read or write files outside that repo.",
+]
+
+bug_form_note = "Do not paste Steam credentials, tokens or private paths. Nothing here needs them."
+bug_output_note = "Paste the output, trimmed. Remove personal paths and anything that looks like a token"
+
+contrib_build = '''Python 3.11+ and git.
+
+```bash
+python -m venv .venv && . .venv/bin/activate
+pip install -e .[dev]
+scripts/test.sh              # python -m pytest -q
+```
+
+The default tests are offline: they need no game, SDK, Blender or Steam. Tests that do are marked (`blender`, `sdk`, `decompiled`, `build`, `sdkbuild`) and skip when the piece is missing.'''
+
+contrib_assets = '''## Security-sensitive behavior
+
+Changes must keep these true: nothing stores, logs or asks for credentials or tokens, nothing uploads or publishes without explicit user approval, and file access stays inside the project. A pull request that weakens one of these will not be merged.
+
+Do not add Keen code, assets or type data here. Test fixtures are synthetic and hand-written.'''
+
+layout = '''- `src/se2modkit/` the Python package (`compat.py` and `compat.toml` hold the supported game versions).
+- `tests/` is pytest. `THIRD_PARTY.md` lists third-party material. `README.md`.'''
+
+build_test = '''```bash
+pip install -e .[dev]
+python -m pytest -q          # offline tests
+ruff check .
+```'''
+
+style = '''- Python 3.11+. 4 spaces, 120 columns, type hints as in the neighbouring code. The core package depends on `numpy` only.
+- Fail with one plain sentence naming what is missing and how to set it; never a traceback for a missing game, SDK or Blender.'''
+
+rules = '''- The supported game versions live in `src/se2modkit/compat.toml`; update it together with the README after verifying a new game build.
+- Paths go through `pathlib`; text files are written with `\n` newlines.
+- Never hard-code a machine-specific path as a default.'''
+
+extra_never = [
+  "Never commit game files, decompiled code, Keen type data or baselines.",
+  "Never add code that stores, logs or requests Steam credentials or tokens.",
+]
+
+skill_build = '''- Offline tests: `python -m pytest -q`. Lint: `ruff check .`.'''
+
+release_steps = '''   Check `src/se2modkit/compat.toml` and the README still match the game build you tested.'''

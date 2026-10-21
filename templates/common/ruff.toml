@@ -1,0 +1,7 @@
+# Conservative on purpose: real errors only (syntax, undefined names, broken comparisons), no style churn.
+line-length = 120
+target-version = "py311"
+extend-exclude = [@@ruff_exclude|tomllist@@]
+
+[lint]
+select = ["E9", "F63", "F7", "F82", "F811"]

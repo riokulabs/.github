@@ -1,0 +1,8 @@
+# Read by scripts/check_repo_guard.py, CI and the pre-commit hook.
+# Paths are fnmatch globs against repo-relative paths; "*" also matches "/".
+forbidden = [@@guard_forbidden|tomllist@@]
+allow = [@@guard_allow|tomllist@@]
+max_kb = @@guard_max_kb@@
+allow_large = [@@guard_allow_large|tomllist@@]
+secret_scan_skip = [@@guard_secret_skip|tomllist@@]
+json_globs = [@@json_globs|tomllist@@]

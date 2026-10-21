@@ -1,0 +1,74 @@
+target = "../../apps/riokulabs-site"
+kind = "website"
+repo = "riokulabs-site"
+name = "Rioku Labs website"
+summary = "The Rioku Labs site (rioku.dev): a Strapi 5 CMS in cms/ and an Astro static site in web/. Private repository."
+exclude = ["SUPPORT.md", "ruff.toml", ".github/workflows/release.yml", ".claude/skills/prepare-release/*"]
+keep = []
+
+test_script = '''( cd cms && npm ci && npm run check )
+( cd web && npm ci && npm test && npx astro check && npm run build )
+# Browser tests and Lighthouse also run in CI: cd web && npm run test:e2e && npm run lighthouse -- --ci'''
+
+pr_checks = [
+  "`npm run check` passes in `cms/`, and `npm test`, `npx astro check` and `npm run build` pass in `web/`",
+  "Anything private stays private: visibility-gated collections still hide drafts and private entries (the build's privacy canary passes)",
+  "No secrets: no `.env`, tokens or API keys committed; `cms/.env.example` lists names only",
+  "Visible text is plain language; art is our own renders or captures, never a publisher's key art",
+  "No new deploy steps in CI; the GitHub Pages workflow (`.github/workflows/pages.yml`) keeps its triggers, secrets and gates unless the maintainer approved a change",
+]
+
+guard_forbidden = [".env", "*.env", "*/.env", "*.pem", "*.key", "*.dll", "*.exe", "*decompiled*", "*SeMcp2.cfg", "*.sqlite", "*.db", "cms/.tmp/*"]
+guard_allow = []
+guard_max_kb = 1500
+guard_allow_large = []
+guard_secret_skip = ["*package-lock.json"]
+json_globs = []
+ruff_exclude = []
+precommit_extra = ""
+
+security_notes = [
+  "Private content reachable on the public site or feeds (drafts, private entries, unpublished mods).",
+  "Secrets, tokens or credentials in the repository or in build output.",
+]
+
+contrib_build = '''Node 24 and npm; `ffmpeg` only for media preparation.
+
+```bash
+npm run install:all        # root, cms/ and web/ dependencies
+cp cms/.env.example cms/.env   # then generate the secrets it lists
+npm run dev                # CMS and site together
+scripts/test.sh            # cms checks, web tests, astro check, build
+```
+
+Browser tests (`npm run test:e2e` in `web/`, needs `npx playwright install chromium`) and Lighthouse run in CI.'''
+
+contrib_assets = '''## Content and assets
+
+Images and videos are our own renders or captures. Do not add a publisher's key art or third-party images without a license. Visible text is plain language. Studio name, domain and org live in `web/src/config/identity.json`.'''
+
+layout = '''- `cms/` Strapi 5 (schemas, seed, tests). `web/` Astro 7 static site (pages, components, scripts, unit and e2e tests).
+- `brand/` logo sources. `tools/` repo scripts. `DEPLOY.md` the manual deploy checklist. Spec and build ledger live in the workspace under `docs/website/`, not in this repo.'''
+
+build_test = '''```bash
+npm run install:all
+( cd cms && npm run check && npm run test:acceptance && npm run build )
+( cd web && npm test && npx astro check && npm run build && npm run test:e2e )
+```'''
+
+style = '''- TypeScript and Astro; 2-space indent (see `.editorconfig`). Follow the neighbouring file.
+- Visible text in plain language, specific and short. No hype, no filler.
+- Everything is visibility-gated: new collections default to private.'''
+
+rules = '''- Never make a private or draft entry reachable: the build asserts this with canary entries; keep that test passing.
+- Art is our own. Game trademark notices stay on game pages.
+- `web/src/config/identity.json` is the one place for name, domain and org.
+- Fixtures under `web/fixtures/` drive CI so it never needs Strapi or secrets.'''
+
+extra_never = [
+  "Never add deploy steps to CI or run a deploy yourself. The one exception is the maintainer-approved GitHub Pages workflow (`.github/workflows/pages.yml`), which builds the static site from Strapi and deploys it to Pages; don't add other deploy targets, and don't change its triggers, secrets or gates without the maintainer's approval in the session. Everything else about deploying is manual (DEPLOY.md).",
+  "Never put credentials in `cms/.env.example`, fixtures or docs.",
+]
+
+skill_build = '''- Browser tests: `cd web && npx playwright install chromium && npm run test:e2e`; Lighthouse: `npm run lighthouse -- --ci`.'''
+release_steps = ""

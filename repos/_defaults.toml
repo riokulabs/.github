@@ -1,0 +1,22 @@
+# Variables every repo gets. repos/<name>.toml overrides them.
+org = "riokulabs"
+site = "rioku.dev"
+maintainer = "Rioku Labs"
+
+# Used by CODEOWNERS. OPEN QUESTION: the maintainer's GitHub username. Left as an obvious placeholder on purpose.
+codeowner = "derrickmehaffy"
+
+# Code of Conduct enforcement contact. OPEN QUESTION: no email address exists yet; wording avoids inventing one.
+conduct_contact = """Report it privately. On the repository, open Security > Report a vulnerability and write that it is a conduct report, or use the contact details on https://rioku.dev. Reports go to the maintainer only."""
+
+keep = []
+exclude = []
+extra_labels = ""
+gitattributes_extra = ""
+discussions = true
+
+# Tool kind CI test job. Defaults reproduce the original single-runner job; a repo overrides them for a matrix.
+ci_runs_on = "ubuntu-latest"
+ci_matrix = "python: ['3.11', '3.12']"
+ci_install = "pip install pytest"
+ci_test = "python3 -m pytest -q"

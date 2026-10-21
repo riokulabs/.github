@@ -1,0 +1,33 @@
+# The org-level defaults repo itself (becomes riokulabs/.github). It only gets the community health files:
+# GitHub applies these to every repo in the org that does not have its own copy.
+target = "."
+kind = "org"
+repo = ".github"
+name = "Rioku Labs projects"
+summary = "Defaults for every Rioku Labs repository."
+exclude = [".claude/*", "scripts/*", ".githooks/*", ".github/workflows/*", "AGENTS.md", "CLAUDE.md", ".repo-guard.toml",
+           ".pre-commit-config.yaml", "ruff.toml", "cliff.toml", ".github/dependabot.yml", ".github/labels.yml",
+           ".editorconfig", ".gitattributes"]
+keep = []
+test_script = "true"
+pr_checks = ["The change does what the description says", "The checks that apply to the change were run", "Docs are updated if behavior changed"]
+guard_forbidden = []
+guard_allow = []
+guard_max_kb = 1024
+guard_allow_large = []
+guard_secret_skip = []
+json_globs = []
+ruff_exclude = []
+precommit_extra = ""
+security_notes = ["See the repository's README for what it covers. In general: anything that lets a mod, tool or script act beyond what it documents."]
+contrib_build = "See the repository's README for how to build and test it."
+contrib_assets = '''## Assets and licensing
+
+Do not add Keen Software House assets beyond what the repository documents, and do not add third-party content without a license compatible with GPL-3.0.'''
+layout = ""
+build_test = ""
+style = ""
+rules = ""
+extra_never = []
+skill_build = ""
+release_steps = ""

@@ -1,0 +1,7 @@
+# managed by riokulabs/.github - edit there (templates/), not here
+# Org-wide default. Repositories with their own .github/ISSUE_TEMPLATE use that instead.
+blank_issues_enabled: false
+contact_links:
+  - name: Rioku Labs
+    url: https://rioku.dev
+    about: Project pages and contact details.
