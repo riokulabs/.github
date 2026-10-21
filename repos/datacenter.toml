@@ -31,6 +31,12 @@ extra_labels = '''- name: block-suggestion
 
 test_script = '''python3 -m pytest -q Tests -m "not build and not sdkbuild" "$@"'''
 
+# CI plan: the offline pytest job stays informational (continue-on-error in templates/mod ci.yml) until se2-modkit
+# installs from a release tag. On the modkit migration branch the suite imports se2modkit, and its pytest plugin runs
+# the shared gates listed in pyproject.toml; the walk and schema gates and the tests needing the Mod SDK or the game's
+# type facts skip on a runner. Once a tag exists: install the pinned se2-modkit in the job, drop continue-on-error, and
+# refresh build_test, pr_checks, contrib_build and skill_build here from the mod's AGENTS.md (se2mod commands).
+
 pr_checks = [
   "Offline tests pass: `scripts/test.sh` (same as `python3 -m pytest -q Tests -m \"not build\"` minus the SDK build)",
   "If a definition, model or script changed: the SDK build passes (`pgrep -x Modern.bin` prints nothing, then `python3 ../../tools/scripts/se2mod.py build DataCenter` exits 0 with no DataCenter warnings)",
