@@ -1,2 +1,2 @@
-# Private repository: no Discussions, no public contact links.
+# Public repository: issues go through the templates (no blank issues). Security reports: SECURITY.md.
 blank_issues_enabled: false

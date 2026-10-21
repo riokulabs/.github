@@ -43,6 +43,12 @@ jobs:
         with: { persist-credentials: false }
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with: { node-version: 24, cache: npm, cache-dependency-path: cms/package-lock.json }
+      # Private privacy lists (the real deny/IP/retired terms; never in the repo). Secret PRIVACY_LOCAL_JSON = the contents
+      # of cms/config/privacy.local.json (DEPLOY.md). Empty (forks): skipped, checks run on the public canaries only.
+      - name: Write the private privacy lists
+        env: { PRIVACY_LOCAL_JSON: "${{ secrets.PRIVACY_LOCAL_JSON }}" }
+        run: |
+          if [ -n "$PRIVACY_LOCAL_JSON" ]; then printf '%s' "$PRIVACY_LOCAL_JSON" > "$GITHUB_WORKSPACE/cms/config/privacy.local.json"; echo "private lists written"; else echo "PRIVACY_LOCAL_JSON not set: public canaries only"; fi
       - run: npm ci
       - run: npm run check            # schema lint, privacy sync, unit tests
       - run: npm run test:acceptance  # M1 acceptance + security checks against a throwaway SQLite DB
@@ -56,6 +62,12 @@ jobs:
         with: { persist-credentials: false }
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with: { node-version: 24, cache: npm, cache-dependency-path: web/package-lock.json }
+      # Private privacy lists (the real deny/IP/retired terms; never in the repo). Secret PRIVACY_LOCAL_JSON = the contents
+      # of cms/config/privacy.local.json (DEPLOY.md). Empty (forks): skipped, checks run on the public canaries only.
+      - name: Write the private privacy lists
+        env: { PRIVACY_LOCAL_JSON: "${{ secrets.PRIVACY_LOCAL_JSON }}" }
+        run: |
+          if [ -n "$PRIVACY_LOCAL_JSON" ]; then printf '%s' "$PRIVACY_LOCAL_JSON" > "$GITHUB_WORKSPACE/cms/config/privacy.local.json"; echo "private lists written"; else echo "PRIVACY_LOCAL_JSON not set: public canaries only"; fi
       - run: npm ci
       - run: npm test                 # client filter, build assertion, Strapi client, dist-lint unit tests
       - run: npx astro check

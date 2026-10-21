@@ -2,7 +2,7 @@ target = "../../apps/riokulabs-site"
 kind = "website"
 repo = "riokulabs-site"
 name = "Rioku Labs website"
-summary = "The Rioku Labs site (rioku.dev): a Strapi 5 CMS in cms/ and an Astro static site in web/. Private repository."
+summary = "The Rioku Labs site (rioku.dev): a Strapi 5 CMS in cms/ and an Astro static site in web/. Public repository; the real privacy lists and private seed entries stay in gitignored local files."
 exclude = ["SUPPORT.md", "ruff.toml", ".github/workflows/release.yml", ".claude/skills/prepare-release/*"]
 keep = []
 
@@ -13,12 +13,13 @@ test_script = '''( cd cms && npm ci && npm run check )
 pr_checks = [
   "`npm run check` passes in `cms/`, and `npm test`, `npx astro check` and `npm run build` pass in `web/`",
   "Anything private stays private: visibility-gated collections still hide drafts and private entries (the build's privacy canary passes)",
+  "`npm run check:public` passes in `cms/`: no private project names, ideas or deny-list terms in tracked files (they live only in the gitignored `cms/config/privacy.local.json` and `cms/seed/private.ts`)",
   "No secrets: no `.env`, tokens or API keys committed; `cms/.env.example` lists names only",
   "Visible text is plain language; art is our own renders or captures, never a publisher's key art",
   "No new deploy steps in CI; the GitHub Pages workflow (`.github/workflows/pages.yml`) keeps its triggers, secrets and gates unless the maintainer approved a change",
 ]
 
-guard_forbidden = [".env", "*.env", "*/.env", "*.pem", "*.key", "*.dll", "*.exe", "*decompiled*", "*SeMcp2.cfg", "*.sqlite", "*.db", "cms/.tmp/*"]
+guard_forbidden = ["cms/config/privacy.local.json", "cms/seed/private.ts", ".env", "*.env", "*/.env", "*.pem", "*.key", "*.dll", "*.exe", "*decompiled*", "*SeMcp2.cfg", "*.sqlite", "*.db", "cms/.tmp/*"]
 guard_allow = []
 guard_max_kb = 1500
 guard_allow_large = []
