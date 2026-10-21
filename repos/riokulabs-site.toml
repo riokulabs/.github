@@ -8,7 +8,7 @@ keep = []
 
 test_script = '''( cd cms && npm ci && npm run check )
 ( cd web && npm ci && npm test && npx astro check && npm run build )
-# Browser tests and Lighthouse also run in CI: cd web && npm run test:e2e && npm run lighthouse -- --ci'''
+# Browser tests also run in CI: cd web && npm run test:e2e. Lighthouse is local only: npm run lighthouse'''
 
 pr_checks = [
   "`npm run check` passes in `cms/`, and `npm test`, `npx astro check` and `npm run build` pass in `web/`",
@@ -71,5 +71,5 @@ extra_never = [
   "Never put credentials in `cms/.env.example`, fixtures or docs.",
 ]
 
-skill_build = '''- Browser tests: `cd web && npx playwright install chromium && npm run test:e2e`; Lighthouse: `npm run lighthouse -- --ci`.'''
+skill_build = '''- Browser tests: `cd web && npx playwright install chromium && npm run test:e2e`; Lighthouse (local only, not in CI: timings on shared runners are noise): `npm run lighthouse`.'''
 release_steps = ""
