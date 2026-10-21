@@ -72,7 +72,7 @@ python -m pytest -q          # offline tests
 ruff check .
 ```'''
 
-style = '''- Python 3.11+. 4 spaces, 120 columns, type hints as in the neighbouring code. The core package depends on `numpy` only.
+style = '''- Python 3.11+. 4 spaces, 120 columns, type hints as in the neighboring code. The core package depends on `numpy` only.
 - Fail with one plain sentence naming what is missing and how to set it; never a traceback for a missing game, SDK or Blender.'''
 
 rules = '''- The supported game versions live in `src/se2modkit/compat.toml`; update it together with the README after verifying a new game build.
