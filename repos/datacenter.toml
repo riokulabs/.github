@@ -95,7 +95,7 @@ layout = '''- `Assets/DataCenter/` game-format block definitions (`.def`, `.part
 
 build_test = '''```bash
 python3 -m pytest -q Tests -m "not build and not sdkbuild"                  # offline tests
-blender -b --python Source/Model/build_dc.py -- all --no-render             # models (needs Blender 5.x)
+id=$(se2mod queue submit --load heavy -- blender -b --python Source/Model/build_dc.py -- all --no-render) && se2mod queue wait "$id"  # models (Blender 5.x, through the GPU job queue)
 python3 Source/Model/build_integration.py && bash Source/Model/integration/install.sh        # stage, then dry-run install
 pgrep -x Modern.bin; python3 ../../tools/scripts/se2mod.py build DataCenter  # SDK build (game closed)
 ```
@@ -118,7 +118,7 @@ extra_never = [
   "Never commit preview renders, `Content/`, or Blender files.",
 ]
 
-skill_build = '''- Models: `blender -b --python Source/Model/build_dc.py -- all --no-render` (Blender 5.x).
+skill_build = '''- Models (Blender 5.x): run Blender through the GPU job queue, never directly: `id=$(se2mod queue submit --load heavy -- blender -b --python Source/Model/build_dc.py -- all --no-render)`, then `se2mod queue wait "$id"`.
 - Stage and install: `python3 Source/Model/build_integration.py`, then `bash Source/Model/integration/install.sh` (dry run; `--apply` only when asked).
 - SDK build: `pgrep -x Modern.bin` must print nothing, then `python3 ../../tools/scripts/se2mod.py build DataCenter`. Main checkout only, never a worktree.'''
 
