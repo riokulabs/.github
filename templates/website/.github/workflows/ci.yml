@@ -1,4 +1,6 @@
 # Same commands as local development. The web build uses the committed fixtures, so CI never needs Strapi or secrets.
+# The privacy checks run on the synthetic canaries in cms/config/privacy.json; the real lists live in the CMS
+# (Settings > Privacy lists), where the publish guard and the Pages build use them. check:public skips here.
 # No deploy step here on purpose: deploying is .github/workflows/pages.yml (GitHub Pages, maintainer-approved);
 # everything else about deploying is manual.
 name: ci
