@@ -66,7 +66,7 @@ security_notes = [
   "Not in scope: bugs in Space Engineers 2 itself, Pulsar or LinuxCompat. Report those to their projects.",
 ]
 
-contrib_build = '''**Offline checks (anyone):** `scripts/test.sh` runs the pure-Python tests. Note that some test modules import `se2model`, a shared modeling library that currently lives in the maintainer's workspace (`../../tools/se2model`) and is not in this repository, so on a bare clone part of the suite cannot be collected yet.
+contrib_build = '''**Offline checks (anyone):** `scripts/test.sh` runs the pure-Python tests. The model code and some tests import [se2modkit](https://github.com/riokulabs/se2-modkit), the shared modding library: install it (`pip install git+https://github.com/riokulabs/se2-modkit`), or set `SE2MODKIT_SRC` to a checkout's `src/` folder.
 
 **Full build (needs the maintainer's setup):**
 
@@ -100,7 +100,7 @@ python3 Source/Model/build_integration.py && bash Source/Model/integration/insta
 pgrep -x Modern.bin; se2mod build DataCenter  # SDK build (game closed)
 ```
 
-Pytest markers: `build` needs a prior Blender build, `sdkbuild` runs the real SDK build (opt-in with `DC_SDK_BUILD=1`), `scripts` needs `Scripts/`. Some tests import `se2model` from `../../tools`, which exists only in the maintainer's workspace; on a bare clone those modules fail to collect.'''
+Pytest markers: `build` needs a prior Blender build, `sdkbuild` runs the real SDK build (opt-in with `DC_SDK_BUILD=1`), `scripts` needs `Scripts/`. The model code and some tests import `se2modkit`: installed, or from `$SE2MODKIT_SRC` or the workspace's `tools/se2-modkit/src` (`Source/Model/modkit_path.py` looks there, for the tests and for scripts Blender runs directly).'''
 
 style = '''- Python 3.11+, 4-space indent, 120 columns, standard library plus Blender's `bpy` where needed. Follow the neighboring file.
 - Comments say why, not what. Docs and messages in plain language; no marketing words.
