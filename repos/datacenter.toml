@@ -39,7 +39,7 @@ test_script = '''python3 -m pytest -q Tests -m "not build and not sdkbuild" "$@"
 
 pr_checks = [
   "Offline tests pass: `scripts/test.sh` (same as `python3 -m pytest -q Tests -m \"not build\"` minus the SDK build)",
-  "If a definition, model or script changed: the SDK build passes (`pgrep -x Modern.bin` prints nothing, then `python3 ../../tools/scripts/se2mod.py build DataCenter` exits 0 with no DataCenter warnings)",
+  "If a definition, model or script changed: the SDK build passes (`pgrep -x Modern.bin` prints nothing, then `se2mod build DataCenter` exits 0 with no DataCenter warnings)",
   "Files under `Assets/` come from the generator (`Source/Model/`), not hand edits; GUIDs are untouched",
   "No preview renders, decompiled code, Keen DLLs, or tokens are committed (`python3 scripts/check_repo_guard.py`)",
   "Built from the main checkout, not a git worktree, and nothing was published",
@@ -97,7 +97,7 @@ build_test = '''```bash
 python3 -m pytest -q Tests -m "not build and not sdkbuild"                  # offline tests
 id=$(se2mod queue submit --load heavy -- blender -b --python Source/Model/build_dc.py -- all --no-render) && se2mod queue wait "$id"  # models (Blender 5.x, through the GPU job queue)
 python3 Source/Model/build_integration.py && bash Source/Model/integration/install.sh        # stage, then dry-run install
-pgrep -x Modern.bin; python3 ../../tools/scripts/se2mod.py build DataCenter  # SDK build (game closed)
+pgrep -x Modern.bin; se2mod build DataCenter  # SDK build (game closed)
 ```
 
 Pytest markers: `build` needs a prior Blender build, `sdkbuild` runs the real SDK build (opt-in with `DC_SDK_BUILD=1`), `scripts` needs `Scripts/`. Some tests import `se2model` from `../../tools`, which exists only in the maintainer's workspace; on a bare clone those modules fail to collect.'''
@@ -120,6 +120,7 @@ extra_never = [
 
 skill_build = '''- Models (Blender 5.x): run Blender through the GPU job queue, never directly: `id=$(se2mod queue submit --load heavy -- blender -b --python Source/Model/build_dc.py -- all --no-render)`, then `se2mod queue wait "$id"`.
 - Stage and install: `python3 Source/Model/build_integration.py`, then `bash Source/Model/integration/install.sh` (dry run; `--apply` only when asked).
-- SDK build: `pgrep -x Modern.bin` must print nothing, then `python3 ../../tools/scripts/se2mod.py build DataCenter`. Main checkout only, never a worktree.'''
+- SDK build: `pgrep -x Modern.bin` must print nothing, then `se2mod build DataCenter`. Main checkout only, never a worktree.'''
 
+tag_step = '''5. Stop here. The release is tagged by the publish tool, not by hand: `se2publish publish DataCenter --version <version>` uploads to the Workshop, then tags the published commit, pushes the tag and publishes the GitHub release. Never push a `v*` tag before the upload; the tag must point at the commit that shipped.'''
 release_steps = '''   Also update `docs/workshop/` text and the version in `ModProject.modhub-metadata` if it carries one, and run the SDK build from the main checkout. The maintainer publishes to the Workshop with the publish tool; do not publish.'''

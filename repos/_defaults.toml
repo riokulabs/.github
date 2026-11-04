@@ -20,3 +20,6 @@ ci_runs_on = "ubuntu-latest"
 ci_matrix = "python: ['3.11', '3.12']"
 ci_install = "pip install pytest"
 ci_test = "python3 -m pytest -q"
+
+# Last step of prepare-release: how the release gets its tag.
+tag_step = '''5. Show the maintainer the tag command (`git tag -s v<version>` or `git tag -a`) and stop. The maintainer pushes the tag; pushing a `v*` tag makes CI draft a GitHub release from the notes.'''
